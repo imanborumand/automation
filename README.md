@@ -11,6 +11,8 @@ docker-compose build
 docker-composer up -d
 ```
 
+---
+
 #### now run the following command for create database and runs all of seeders
 
 ``` 
@@ -19,3 +21,10 @@ docker-composer up -d
 
 
 * After executing the above commands, the application is available on port 8081!
+
+---
+### Run Test 
+for run test you can run following command in terminal
+``` 
+ docker exec -it automation-app php artisan test
+```
