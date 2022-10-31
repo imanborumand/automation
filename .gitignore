@@ -1,0 +1,8 @@
+app/.idea
+/.idea
+.DS_Store
+app/public/.DS_Store
+app/storage/logs/*.log
+app/composer.lock
+app/public/storage
+/.gitlab

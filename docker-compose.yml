@@ -1,0 +1,76 @@
+version: '2'
+services:
+
+  #PHP Service
+  automation-app:
+    build:
+      context: .
+      dockerfile: app.dockerfile
+    container_name: automation-app
+    tty: true
+    environment:
+      SERVICE_NAME: automation-app
+      SERVICE_TAGS: dev
+    working_dir: /var/www/server
+    env_file: './app/.env.local'
+    volumes:
+      - ./app:/var/www/server
+      - ./php/local.ini:/usr/local/etc/php/conf.d/local.ini
+    networks:
+      - automation-network
+    depends_on:
+      - automation-mysql
+    command: /bin/bash -c "php-fpm | /usr/bin/supervisord -n -c /etc/supervisor/supervisord.conf"
+
+
+  #Nginx Service
+  automation-webserver:
+    build:
+      context: ./
+      dockerfile: webserver.dockerfile
+    container_name: automation-webserver
+    tty: true
+    ports:
+      - "8081:80"
+    volumes:
+      - ./app:/var/www/server
+    depends_on:
+      - automation-app
+    networks:
+      - automation-network
+
+
+  #MySQL Service
+  automation-mysql:
+    image: mysql:8.0
+    container_name: automation-mysql
+    restart: always
+    tty: true
+    ports:
+      - "33040:3306"
+    environment:
+      MYSQL_DATABASE: automation
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_PASSWORD: secret
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql
+    volumes:
+      - db_data:/var/lib/mysql/
+      - ./mysql/my.cnf:/etc/mysql/my.cnf
+    networks:
+      - automation-network
+
+networks:
+  automation-network:
+    driver: bridge
+
+volumes:
+  db_data:
+
+
+
+
+
+
+
+                        
